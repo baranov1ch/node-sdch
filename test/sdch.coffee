@@ -1,4 +1,4 @@
-sdch = require '../sdch'
+sdch = require '../lib/sdch'
 chai = require 'chai'
 stream = require 'stream'
 
