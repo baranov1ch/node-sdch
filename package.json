@@ -1,0 +1,29 @@
+{
+  "name": "sdch",
+  "description": "SDCH encoder/decoder for node.js",
+  "version": "0.0.1",
+  "author": "Alexey Baranov <me@kotiki.cc>",
+  "license": "MIT",
+  "keywords": [
+    "open-vcdiff",
+    "vcdiff",
+    "sdch",
+    "compression"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baranov1ch/node-sdch"
+  },
+  "main": "./lib/sdch",
+  "dependencies": {
+    "vcdiff": "*"
+  },
+  "devDependencies": {
+    "coffee-script": "*",
+    "chai": "*",
+    "mocha": "*"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha --compilers coffee:coffee-script/register" 
+  }
+}
