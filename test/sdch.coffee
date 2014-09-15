@@ -19,8 +19,8 @@ describe 'sdch', ->
   describe 'there and back again', ->
     dict = new sdch.SdchDictionary
       domain: 'kotiki.cc'
-      data: new Buffer 'testmehatekillomgdieyoulittledumb'
-    testData = 'testmehatekillomgdieyoulittledumbdieyoulittledumb'
+      data: new Buffer 'this is a test dictionary not very long'
+    testData = 'this is a test dictionary not very long a test dictionary not'
 
     it 'should encode and decode sync', ->
       e = sdch.sdchEncodeSync testData, dict

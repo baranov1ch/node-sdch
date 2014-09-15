@@ -16,7 +16,7 @@
   },
   "main": "./lib/sdch",
   "dependencies": {
-    "vcdiff": "*"
+    "vcdiff": "~0.0.1"
   },
   "devDependencies": {
     "coffee-script": "*",

@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "0.10"
+
+before_install:
+  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+    #Install and use gcc-4.8 (don't build with gcc-4.6)
+    #libstdc++-4.8 is needed by Clang to build too
+  - sudo apt-get -qq install g++-4.8 libstdc++-4.8-dev
+  - export CXX="g++-4.8"
