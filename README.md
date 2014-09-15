@@ -65,7 +65,9 @@ max-age: 86400
 When the client requests the server, it appends _client hashes_ of available
 dictionaries (which the client may have downloaded later). The server chooses
 the dictionary to decode with and proceeds. This is why `SdchDecoder` accepts
-the list of dictionaries instead of a single one.
+the list of dictionaries instead of a single one. Decoder do not know which
+particular dictionary server whould choose, it will figure it out only when
+parsing the response.
 
 SDCH-encoded entity differs from VCDIFF encoded by dictionary _server hash_
 appended in a front of vcdiff-encoded body. So SDCH encoder just prepends
