@@ -1,5 +1,7 @@
 # node-sdch
 
+[![Build Status](https://travis-ci.org/baranov1ch/node-sdch.svg?branch=master)](https://travis-ci.org/baranov1ch/node-sdch)
+
 SDCH encoder/decoder for node.js
 
 ## Quick overview.
