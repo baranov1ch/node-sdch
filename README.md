@@ -317,7 +317,7 @@ magic and trust the header.
 *NOTE:* after the client has parsed the dictionary server hash from the
 response it may use `canUseDictionary` to check if dictionary is valid to use.
 
-#### `createDictionaryFromOptions(opts)`
+##### `createDictionaryFromOptions(opts)`
 
 Creates dictionary from provided options, parsed from the dictionary using
 `createDictionaryOptions` if they seem valid. Otherwise throws Error.
@@ -338,7 +338,7 @@ of these mean just not belonging to the domain:)
  * if `opts.formatVersion is provided but does not equal to `'1.0'` (this is
 what chromium does).
 
-#### `canUseDictionary(dictionary, referringUrl)`
+##### `canUseDictionary(dictionary, referringUrl)`
 
 Determines if the client can really use the dictionary for decoding the
 resource (from `referringUrl`). This check is performed by the client
@@ -358,7 +358,7 @@ description of the `path` field).
 speaking, you should not use non-secure dictionaries for secure resources and
 vice versa.
 
-#### `canAdvertiseDictionary(dictionary, targetUrl)`
+##### `canAdvertiseDictionary(dictionary, targetUrl)`
 
 Determines if the client should advertise that `dictionary` is available when
 it requests `targetUrl`.
@@ -372,7 +372,7 @@ The function return `false` if:
 
 * dictionary is expired (`current time > dictionary.expiration`).
 
-#### `canFetchDictionary(dictionaryUrl, referringUrl)`
+##### `canFetchDictionary(dictionaryUrl, referringUrl)`
 
 Determines if the client should fetch the dictionary located on `dictionaryUrl`
 advertised by the server in the `referringUrl` response.
