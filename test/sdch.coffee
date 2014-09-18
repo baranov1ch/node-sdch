@@ -31,14 +31,15 @@ describe 'sdch', ->
     sdch.should.respondTo 'sdchEncodeSync'
     sdch.should.respondTo 'sdchDecode'
     sdch.should.respondTo 'sdchDecodeSync'
-    sdch.should.respondTo 'createSdchDictionary'
+    sdch.should.respondTo 'createDictionaryOptions'
     sdch.should.have.property 'clientUtils'
-    sdch.clientUtils.should.respondTo 'canSetDictionary'
+    sdch.clientUtils.should.respondTo 'createDictionaryFromOptions'
     sdch.clientUtils.should.respondTo 'canUseDictionary'
     sdch.clientUtils.should.respondTo 'canAdvertiseDictionary'
     sdch.clientUtils.should.respondTo 'canFetchDictionary'
     sdch.clientUtils.should.respondTo 'pathMatch'
     sdch.clientUtils.should.respondTo 'domainMatch'
+    sdch.clientUtils.should.respondTo 'defaultValidation'
 
   describe 'SdchDictionary', ->
     it 'should throw if no url string provided', ->
@@ -197,30 +198,30 @@ describe 'sdch', ->
       describe 'parsing', ->
         it 'should throw if no double LF', ->
           testDict = 'domain:kotiki.cc\npath:/\nкотики'
-          (-> sdch.createSdchDictionary '/dict', testDict)
+          (-> sdch.createDictionaryOptions '/dict', testDict)
           .should.throw /SDCH dictionary headers not found/
 
         it 'should throw if headers are not splittable by :', ->
           testDict = 'domain-kotiki.cc\npath:/\n\nкотики'
-          (-> sdch.createSdchDictionary '/dict', testDict)
+          (-> sdch.createDictionaryOptions '/dict', testDict)
           .should.throw /Invalid header string/
 
         it 'should trim as chromium', ->
           testDict = '  domain:kotiki.cc\npath:  /\n\nкотики'
           # Spaces from the start were not trimmed.
-          (-> sdch.createSdchDictionary '/dict', testDict)
-          .should.throw /domain must be string/
+          opts = sdch.createDictionaryOptions '/dict', testDict
+          should.not.exist opts.domain
 
           testDict = 'domain:kotiki.cc\npath:\t \t/\n\nкотики'
           # Spaces after 'path:' were trimmed
-          dict = sdch.createSdchDictionary '/dict', testDict
-          dict.path.should.equal '/'
+          opts = sdch.createDictionaryOptions '/dict', testDict
+          opts.path.should.equal '/'
 
           testDict = 'domain:kotiki.cc\npath:\t \t/  \n  max-age:30\n\nкотики'
           # Spaces after '/' were not trimmed
-          dict = sdch.createSdchDictionary '/dict', testDict
-          dict.path.should.equal '/  '
-          should.not.exist dict.maxAge
+          opts = sdch.createDictionaryOptions '/dict', testDict
+          opts.path.should.equal '/  '
+          should.not.exist opts.maxAge
 
   describe 'clientUtils', ->
     cu = sdch.clientUtils
@@ -289,41 +290,82 @@ describe 'sdch', ->
         cu.pathMatch('/kotiki/123/45', '/').should.be.true
 
 
-    describe 'canSetDictionary', ->
+    describe 'createDictionaryFromOptions', ->
       it 'should not allow empty domains', ->
-        cu.canSetDictionary('').should.be.false
+        (-> cu.createDictionaryFromOptions {})
+        .should.throw /Domain is required/
 
       it 'should not allow TLDs', ->
-        cu.canSetDictionary('com').should.be.false
-        cu.canSetDictionary('com.').should.be.false
-        cu.canSetDictionary('co.uk').should.be.false
-        cu.canSetDictionary('s3.amazonaws.com').should.be.false
+        (-> cu.createDictionaryFromOptions domain: 'com')
+        .should.throw /Domain is a TLD/
+        (-> cu.createDictionaryFromOptions domain: 'com.')
+        .should.throw /Domain is a TLD/
+        (-> cu.createDictionaryFromOptions domain: 'co.uk')
+        .should.throw /Domain is a TLD/
+        (-> cu.createDictionaryFromOptions domain: 's3.amazonaws.com')
+        .should.throw /Domain is a TLD/
 
       it 'should allow only same domain', ->
-        cu.canSetDictionary(
-          'kotiki.cc', '', [], 'http://google.com/dict').should.be.false
-        cu.canSetDictionary(
-          'my.kotiki.cc', '', [], 'http://kotiki.cc/dict').should.be.false
-        cu.canSetDictionary(
-          'kotiki.cc', '', [], 'http://kotiki.cc/dict').should.be.true
-        cu.canSetDictionary(
-          '.kotiki.cc', '', [], 'http://my.kotiki.cc/dict').should.be.true
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc', url: 'http://google.com/dict')
+        .should.throw /Domain does not match the one dictionary/
+        (-> cu.createDictionaryFromOptions
+          domain: 'my.kotiki.cc', url: 'http://kotiki.cc/dict')
+        .should.throw /Domain does not match the one dictionary/
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          url: 'http://kotiki.cc/dict'
+          data: 'котики')
+        .should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: '.kotiki.cc'
+          url: 'http://my.kotiki.cc/dict'
+          data: 'котики')
+        .should.not.throw()
 
       it 'should allow only specified ports', ->
-        cu.canSetDictionary(
-          'kotiki.cc', '', [80], 'http://kotiki.cc/dict').should.be.true
-        cu.canSetDictionary(
-          'kotiki.cc', '', [80], 'http://kotiki.cc:80/dict').should.be.true
-        cu.canSetDictionary(
-          'kotiki.cc', '', [80, 443], 'http://kotiki.cc:80/dict')
-        .should.be.true
-        cu.canSetDictionary(
-          'kotiki.cc', '', [443], 'https://kotiki.cc/dict').should.be.true
-        cu.canSetDictionary(
-          'kotiki.cc', '', [443], 'https://kotiki.cc:80/dict').should.be.false
-        cu.canSetDictionary(
-          'kotiki.cc', '', [443, 3000], 'https://kotiki.cc:3000/dict')
-        .should.be.true
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [80]
+          url: 'http://kotiki.cc/dict'
+          data: 'котики').should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [80]
+          url: 'http://kotiki.cc:80/dict'
+          data: 'котики').should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [80, 443]
+          url: 'http://kotiki.cc:80/dict'
+          data: 'котики').should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [443]
+          url: 'https://kotiki.cc/dict'
+          data: 'котики').should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [443]
+          url: 'https://kotiki.cc:80/dict')
+        .should.throw /Port mismatch/
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          ports: [443, 3000]
+          url: 'https://kotiki.cc:3000/dict'
+          data: 'котики').should.not.throw()
+
+      it 'should allow only supported versions', ->
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          formatVersion: '1.0'
+          url: 'https://kotiki.cc:3000/dict'
+          data: 'котики').should.not.throw()
+        (-> cu.createDictionaryFromOptions
+          domain: 'kotiki.cc'
+          formatVersion: '2.0'
+          url: 'https://kotiki.cc:3000/dict'
+          data: 'котики').should.throw /Unsupported format/
 
       describe 'canUseDictionary', ->
         it 'should allow only matching domains', ->
@@ -441,6 +483,11 @@ describe 'sdch', ->
           cu.canFetchDictionary(
             'http://kotiki.cc/dict', 'http://kotiki.cc/page').should.be.true
 
+        it 'should not allow schemes other than http or https', ->
+          cu.canFetchDictionary(
+            'wss://kotiki.cc/dict', 'wss://kotiki.cc/page').should.be.false
+
+
   describe 'Encoding/Decoding', ->
     dict = new sdch.SdchDictionary
       url: 'http://kotiki.cc/dict'
@@ -474,6 +521,16 @@ describe 'sdch', ->
           (->sdch.sdchDecodeSync wrongDictData, [dict])
           .should.throw /Unknown dictionary/
 
+        it 'should throw if validation callback returns false', ->
+          wrongDictData = dict.serverHash + '\0datadatadata'
+          (->
+            sdch.sdchDecodeSync(
+              wrongDictData
+              [dict]
+              url: 'http://resource.com'
+              validationCallback: (d, u) -> false)
+          ).should.throw /dictionary not valid for/
+
       describe 'decode async', ->
         # TODO
         xit 'should throw if data is too short', (done) ->
@@ -493,6 +550,19 @@ describe 'sdch', ->
           sdch.sdchDecode wrongDictData, [dict], (err, data) ->
             err.message.should.have.string 'Unknown dictionary'
             done()
+
+        it 'should throw if validation callback returns false', ->
+          wrongDictData = dict.serverHash + '\0datadatadata'
+          sdch.sdchDecode(
+            wrongDictData
+            [dict]
+            {
+              url: 'http://resource.com'
+              validationCallback: (d, u) -> false
+            }
+            (err, data) ->
+              err.message.should.have.string 'dictionary not valid for')
+
 
     describe 'there and back again', ->
       it 'should encode and decode sync', ->
