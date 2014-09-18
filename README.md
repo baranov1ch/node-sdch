@@ -59,7 +59,6 @@ port: 80
 port: 3000
 max-age: 86400
 
-
 ```
 
 When the client requests the server, it appends _client hashes_ of available
@@ -76,8 +75,10 @@ this hash and selects the dictionary from provided and decodes the data.
 
 > Well-behaved SDCH client should check a lot of security stuff about the
 > dictionaries proposed by the server, particularly scheme, domain, port,
-> and path match. For more information, plz refer to chromium code or to
-> [connect-sdch](http://github.com/baranov1ch/connect-sdch) example client.
+> and path match. This package includes util functions to make all these
+> checks (`sdch.clientUtils`). See how [connect-sdch](http://github.com/baranov1ch/connect-sdch) example client
+> uses them to validate server provided dictionaries and to choose what
+> to advertise. You may also refer to chromium code for more information.
 
 Here is a quick example of how server and client hashes are created:
 
