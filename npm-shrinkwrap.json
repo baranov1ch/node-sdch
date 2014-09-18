@@ -1,0 +1,15 @@
+{
+  "name": "sdch",
+  "version": "0.0.1",
+  "dependencies": {
+    "tldjs": {
+      "version": "1.5.0",
+      "from": "tldjs@*",
+      "resolved": "https://registry.npmjs.org/tldjs/-/tldjs-1.5.0.tgz"
+    },
+    "vcdiff": {
+      "version": "0.0.1",
+      "from": "vcdiff@~0.0.1"
+    }
+  }
+}
