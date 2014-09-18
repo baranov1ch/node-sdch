@@ -162,9 +162,9 @@ var dict = new sdch.SdchDictionary({
 Only `domain`, `url` and `data` are required, others are optional. The
 constructor will throw if required args are missing or any arg has wrong type.
 
-Sometimes you need to parse it from some source. For instance, client will
-parse the dictionary from the server response. Or if you want to serve
-dictionaries as a static resources using nginx, you will have to prepare
+Sometimes you need to parse the dictionary from some source. For instance,
+client will parse the dictionary from the server response. Or if you want to
+serve dictionaries as a static resources using nginx, you will have to prepare
 the files in advance (prepend SDCH headers before data). Then you may create
 `options` from that data using `createDictionaryOptions(dictionaryURL, data)`.
 `dictionaryURL` is the url where the dictionary is served. For the client it
@@ -269,7 +269,8 @@ creation of SDCH clients to test SDCH servers.
 HTTP header:
 
 ```
-Accept-Encoding: sdch,gzip,deflate```
+Accept-Encoding: sdch,gzip,deflate
+```
 
 * When the client receives response, it should check `Get-Dictionary` header.
 If it presents, the client may follow url from that header and download the
@@ -299,7 +300,8 @@ advertise the dictionary to the server.
 `Content-Encoding` header. The server may also compress the response with gzip
 or deflate, do the header will be smth like:
 ```
-Content-Encoding: sdch, gzip```
+Content-Encoding: sdch, gzip
+```
 The client should first decompress the response by gzip/deflate and then pass
 it do sdch decoder.
 
