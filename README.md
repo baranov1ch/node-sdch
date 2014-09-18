@@ -276,15 +276,15 @@ Accept-Encoding: sdch,gzip,deflate
 If it presents, the client may follow url from that header and download the
 dictionary.
 
-*NOTE:* Use `canFetchDictionary` to determine if the client should really
-fetch that dictionary or smth is wrong.
+> *NOTE:* Use `canFetchDictionary` to determine if the client should really
+> fetch that dictionary or smth is wrong.
 
 
 * When the client downloads the dictionary, it parses it and stores somewhere
 
-*NOTE:* Use `createDictionaryOptions` to parse dictionary params from the
-response and `createDictionaryFromOptions` to check if the dictionary is valid
-and create it if so.
+> *NOTE:* Use `createDictionaryOptions` to parse dictionary params from the
+> response and `createDictionaryFromOptions` to check if the dictionary is valid
+> and create it if so.
 
 * The client may advertise dictionary to the server in the future requests to
 that domain by appending its `clientHash` to `Avail-Dictionary` request header.
@@ -293,8 +293,8 @@ dictionaries, the client is willing to advertise to the server.
 Chromium advertises all available dictioinaries for the domain (plus some
 checks).
 
-*NOTE:* Use `canAdvertiseDictionary` to determine if the client should
-advertise the dictionary to the server.
+> *NOTE:* Use `canAdvertiseDictionary` to determine if the client should
+> advertise the dictionary to the server.
 
 * If the server chooses to SDCH-encode the resource, it will append `sdch` to
 `Content-Encoding` header. The server may also compress the response with gzip
@@ -305,17 +305,17 @@ Content-Encoding: sdch, gzip
 The client should first decompress the response by gzip/deflate and then pass
 it do sdch decoder.
 
-*NOTE:* There is a lot of buzz in that place. Some proxies in the wild tend to
-mess with CE header, so that it may be just `sdch` or `gzip` even if the
-resource id SDCH'ed and gzipped or just SDCH'ed or just gzipped or... you got
-the idea:) so Chromium tries to perform gzip and sdch decoding for every
-resource it has advertised the dictionary, despite the values of the
-Content-Encoding header, and falls back if fails. Since we're not writing the
-browser and just want to test our SDCH-server directly, we may skip all that
-magic and trust the header.
+> *NOTE:* There is a lot of buzz in that place. Some proxies in the wild tend to
+> mess with CE header, so that it may be just `sdch` or `gzip` even if the
+> resource id SDCH'ed and gzipped or just SDCH'ed or just gzipped or... you got
+> the idea:) so Chromium tries to perform gzip and sdch decoding for every
+> resource it has advertised the dictionary, despite the values of the
+> `Content-Encoding` header, and falls back if fails. Since we're not writing the
+> browser and just want to test our SDCH-server directly, we may skip all that
+> magic and trust the header.
 
-*NOTE:* after the client has parsed the dictionary server hash from the
-response it may use `canUseDictionary` to check if dictionary is valid to use.
+> *NOTE:* after the client has parsed the dictionary server hash from the
+> response it may use `canUseDictionary` to check if dictionary is valid to use.
 
 ##### `createDictionaryFromOptions(opts)`
 
