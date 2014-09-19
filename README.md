@@ -305,7 +305,7 @@ Content-Encoding: sdch, gzip
 The client should first decompress the response by gzip/deflate and then pass
 it do sdch decoder.
 
-> *NOTE:* There is a lot of buzz in that place. Some proxies in the wild tend to
+> *NOTE:* There is a lot of mess in that place. Some proxies in the wild tend to
 > mess with CE header, so that it may be just `sdch` or `gzip` even if the
 > resource id SDCH'ed and gzipped or just SDCH'ed or just gzipped or... you got
 > the idea:) so Chromium tries to perform gzip and sdch decoding for every
@@ -313,6 +313,13 @@ it do sdch decoder.
 > `Content-Encoding` header, and falls back if fails. Since we're not writing the
 > browser and just want to test our SDCH-server directly, we may skip all that
 > magic and trust the header.
+
+If the server decided not to SDCH-encode the response even if the client has
+advertised some valid dictionaries, it adds
+```
+X-SDCH-Encode: 0
+```
+header to the response. The client should be prepared to handle it.
 
 > *NOTE:* after the client has parsed the dictionary server hash from the
 > response it may use `canUseDictionary` to check if dictionary is valid to use.
