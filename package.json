@@ -16,7 +16,7 @@
   },
   "main": "./lib/sdch",
   "dependencies": {
-    "vcdiff": "~0.0.1",
+    "vcdiff": "~0.0.2",
     "tldjs": "*"
   },
   "devDependencies": {
