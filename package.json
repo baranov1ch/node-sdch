@@ -1,7 +1,7 @@
 {
   "name": "sdch",
   "description": "SDCH encoder/decoder for node.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Alexey Baranov <me@kotiki.cc>",
   "license": "MIT",
   "keywords": [
