@@ -4,6 +4,20 @@
 
 SDCH encoder/decoder for node.js
 
+Refer to [the spec](http://lists.w3.org/Archives/Public/ietf-http-wg/2008JulSep/att-0441/Shared_Dictionary_Compression_over_HTTP.pdf) for more information.
+
+Keep in mind, that it is to accurate in all aspects. For instance:
+
+* Chromium already supports SDCH-over-HTTPS as it is now considered to not
+introduce additional risks.
+
+* Chromium does not support comma separated port list. Use multiple headers.
+
+* Chromium downloads only the first dictionary from `Get_Dictionary` header.
+
+This package mimics Chromium behavior rather than follow the spec precisely,
+since Chromium is the real consumer of SDCH, not the spec:)
+
 ## Quick overview.
 
 Based on [node-vcdiff](http://github.com/baranov1ch/node-vcdiff). In a nutshell,

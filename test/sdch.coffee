@@ -289,6 +289,12 @@ describe 'sdch', ->
         cu.pathMatch('/kotiki/123/45', '/kotiki/').should.be.true
         cu.pathMatch('/kotiki/123/45', '/').should.be.true
 
+      it 'should work for spec example', ->
+        cu.pathMatch('/tec/waldo', '/tec').should.be.true
+        cu.pathMatch('/tec/waldo', '/tec/').should.be.true
+        cu.pathMatch('/tec/waldo', '/tec/waldo').should.be.true
+        cu.pathMatch('/tec/waldo', '/tec/wal').should.be.false
+
 
     describe 'createDictionaryFromOptions', ->
       it 'should not allow empty domains', ->
